@@ -1,16 +1,22 @@
 var express = require('express')
 var soap = require('soap');
+var bodyParser = require('body-parser')
+var cors = require('cors')
 const app = express();
+app.use(bodyParser.json())
+app.use(cors())
 const port = 9999;
-app.get('/send-sms', (req, res) => {
-  var url = 'http://brand1.aztech.com.vn/ws/agentSmsApiSoap?wsdl';
+app.post('/send-sms', (req, res) => {
+  const { receiver, message } = req.body;
+
+  var url = 'http://brand.aztech.com.vn/ws/agentSmsApiSoap?wsdl';
   var args = {
       authenticateUser : 'ileantestapi',
       authenticatePass : 'ilean@api@2019',
       brandName : 'AZTECH',
       type : 1,
-      receiver: '84775417247',
-      message: 'Zenbox thong bao, chuc mung khach hang',
+      receiver,
+      message
   };
   soap.createClient(url, function(err, client) {
       if (err) {
