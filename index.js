@@ -9,25 +9,28 @@ const port = 9999;
 app.post('/send-sms', (req, res) => {
   const { receiver, message } = req.body;
 
-  var url = 'http://brand.aztech.com.vn/ws/agentSmsApiSoap?wsdl';
+  var url = 'http://center.fibosms.com/service.asmx?wsdl';
   var args = {
-      authenticateUser : 'ileantestapi',
-      authenticatePass : 'ilean@api@2019',
-      brandName : 'AZTECH',
-      type : 1,
-      receiver,
-      message
+      clientNo : 'CL1809200001',
+      clientPass : '9QWRCd8MtDNYeMvj',
+      senderName : 'LONGCODE',
+      smsGUID : 0,
+      phoneNumber: receiver,
+      smsMessage: message,
+      serviceType: 0
   };
   soap.createClient(url, function(err, client) {
       if (err) {
         console.log('ERROR: ', err)
       }
-      client.sendSms(args, function(err, result) {
+      console.log(client)
+      client.SendMaskedSMS(args, function(err, result) {
           if (err) {
             console.log('ERROR: ', err)
           }
-          console.log('RESULT:', result);
-          res.send(result)
+          const resp = result.SendMaskedSMSResult.match(/[0-9]/g).join('')
+          console.log('RES:', resp);
+          res.send({Return: resp})
       });
   });
 })
